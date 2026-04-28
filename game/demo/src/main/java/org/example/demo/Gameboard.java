@@ -1,5 +1,4 @@
-package com.champlain.soft.game;
-
+package org.example.demo;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -10,7 +9,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class Gameboard extends Application {
-    // 🔹 Grid constants
+    // Grid constants
     private static final int ROWS = 10;
     private static final int COLS = 10;
 
@@ -18,7 +17,7 @@ public class Gameboard extends Application {
         GRASS, PLAYER, PRINCESS, BOMB, WALL
     }
 
-    // 🔹 Use "matrix" instead of "map"
+    // Use "matrix" instead of "map"
     private CellType[][] matrix = new CellType[ROWS][COLS];
 
     @Override
