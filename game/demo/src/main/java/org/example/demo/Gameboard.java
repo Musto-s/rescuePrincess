@@ -12,6 +12,8 @@ public class Gameboard extends Application {
     // Grid constants
     private static final int ROWS = 10;
     private static final int COLS = 10;
+    private static final int SCENE_WIDTH = 800;
+    private static final int SCENE_HEIGHT = 800;
 
     enum CellType {
         GRASS, PLAYER, PRINCESS, BOMB, WALL
@@ -26,12 +28,14 @@ public class Gameboard extends Application {
         initMatrix();
 
         GridPane grid = new GridPane();
+        grid.prefWidthProperty().bind(stage.widthProperty());
+        grid.prefHeightProperty().bind(stage.heightProperty());
         drawBoard(grid);
 
         BorderPane root = new BorderPane();
         root.setCenter(grid);
 
-        Scene scene = new Scene(root, 400,700);
+        Scene scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
 
         stage.setTitle("Rescue the Princess");
         stage.setScene(scene);
@@ -60,7 +64,8 @@ public class Gameboard extends Application {
             for (int col = 0; col < COLS; col++) {
 
                 StackPane cell = new StackPane();
-                cell.setPrefSize(20, 20);
+                cell.prefWidthProperty().bind(grid.widthProperty().divide(COLS));
+                cell.prefHeightProperty().bind(grid.heightProperty().divide(ROWS));
                 cell.setStyle("-fx-border-color: black; -fx-background-color: beige;");
 
                 Label label = new Label();
