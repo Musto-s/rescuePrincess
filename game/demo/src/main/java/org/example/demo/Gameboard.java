@@ -2,7 +2,8 @@ package org.example.demo;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -19,14 +20,27 @@ public class Gameboard extends Application {
         GRASS, PLAYER, PRINCESS, BOMB, WALL
     }
 
-    // Use "matrix" instead of "map"
     private CellType[][] matrix = new CellType[ROWS][COLS];
+
+    // Images for each cell type
+    private Image grassImg;
+    private Image playerImg;
+    private Image princessImg;
+    private Image bombImg;
+    private Image wallImg;
+
+    private Stage stage;
 
     @Override
     public void start(Stage stage) {
+        this.stage = stage;
+        grassImg    = new Image(getClass().getResource("/org/example/demo/gameboard/grass.png").toExternalForm());
+        playerImg   = new Image(getClass().getResource("/org/example/demo/gameboard/player.png").toExternalForm());
+        princessImg = new Image(getClass().getResource("/org/example/demo/gameboard/princess.png").toExternalForm());
+        bombImg     = new Image(getClass().getResource("/org/example/demo/gameboard/bomb.png").toExternalForm());
+        wallImg     = new Image(getClass().getResource("/org/example/demo/gameboard/wall.png").toExternalForm());
 
         initMatrix();
-
         GridPane grid = new GridPane();
         grid.prefWidthProperty().bind(stage.widthProperty());
         grid.prefHeightProperty().bind(stage.heightProperty());
@@ -68,26 +82,35 @@ public class Gameboard extends Application {
                 cell.prefHeightProperty().bind(grid.heightProperty().divide(ROWS));
                 cell.setStyle("-fx-border-color: black; -fx-background-color: beige;");
 
-                Label label = new Label();
-
-                if(matrix[row][col] == CellType.PLAYER ) {
-                    label.setText("🧍");
-                }else if(matrix[row][col] == CellType.PRINCESS ) {
-                    label.setText("👸");
-                }else if(matrix[row][col] == CellType.BOMB){
-                    label.setText("💣");
-                }else if(matrix[row][col] == CellType.WALL){
-                    label.setText("");
-                    cell.setStyle("-fx-border-color: black; -fx-background-color: gray;");
-                }else{
-                    label.setText("");
+                // Grass on botom
+                if (matrix[row][col] != CellType.WALL) {
+                    ImageView grassView = new ImageView(grassImg);
+                    grassView.fitWidthProperty().bind(stage.widthProperty().divide(COLS));
+                    grassView.fitHeightProperty().bind(stage.heightProperty().divide(ROWS));
+                    grassView.setPreserveRatio(false);
+                    cell.getChildren().add(grassView);
                 }
 
-                cell.getChildren().add(label);
+                // Add entity image on top of the cell
+                Image entityImage = null;
+                if (matrix[row][col] == CellType.PLAYER)        entityImage = playerImg;
+                else if (matrix[row][col] == CellType.PRINCESS) entityImage = princessImg;
+                else if (matrix[row][col] == CellType.BOMB)     entityImage = bombImg;
+                else if (matrix[row][col] == CellType.WALL) {
+                    entityImage = wallImg;
+                    cell.setStyle("-fx-border-color: black; -fx-background-color: gray;");
+                }
+
+                if (entityImage != null) {
+                    ImageView entityView = new ImageView(entityImage);
+                    entityView.fitWidthProperty().bind(stage.widthProperty().divide(COLS));
+                    entityView.fitHeightProperty().bind(stage.heightProperty().divide(ROWS));
+                    entityView.setPreserveRatio(false);
+                    cell.getChildren().add(entityView);
+                }
+
                 grid.add(cell, col, row);
             }
         }
     }
-
-
 }
