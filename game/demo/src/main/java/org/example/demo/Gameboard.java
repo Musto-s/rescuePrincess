@@ -9,6 +9,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class Gameboard extends Application {
     // Grid constants
     private static final int ROWS = 10;
@@ -63,12 +67,37 @@ public class Gameboard extends Application {
             }
         }
 
-        // Sample objects
-        matrix[0][0] = CellType.PLAYER;
-        matrix[9][9] = CellType.PRINCESS;
-        matrix[4][5] = CellType.BOMB;
-        matrix[1][1] = CellType.WALL;
-        matrix[1][2] = CellType.WALL;
+        // Walls on the perimeter
+        for (int c = 0; c < COLS; c++) {
+            matrix[0][c] = CellType.WALL;
+            matrix[ROWS - 1][c] = CellType.WALL;
+        }
+        for (int r = 0; r < ROWS; r++) {
+            matrix[r][0] = CellType.WALL;
+            matrix[r][COLS - 1] = CellType.WALL;
+        }
+
+        // Player always starts at [1][1]
+        matrix[1][1] = CellType.PLAYER;
+
+        // Collect all empty inner cells
+        List<int[]> freeCells = new ArrayList<>();
+        for (int r = 1; r < ROWS - 1; r++) {
+            for (int c = 1; c < COLS - 1; c++) {
+                if (matrix[r][c] == CellType.GRASS) {
+                    freeCells.add(new int[]{r, c});
+                }
+            }
+        }
+
+        // Shuffle and place princess and bombs in random positions
+        Collections.shuffle(freeCells);
+        matrix[freeCells.get(0)[0]][freeCells.get(0)[1]] = CellType.PRINCESS;
+        matrix[freeCells.get(1)[0]][freeCells.get(1)[1]] = CellType.BOMB;
+        matrix[freeCells.get(2)[0]][freeCells.get(2)[1]] = CellType.BOMB;
+        matrix[freeCells.get(3)[0]][freeCells.get(3)[1]] = CellType.BOMB;
+        matrix[freeCells.get(4)[0]][freeCells.get(4)[1]] = CellType.BOMB;
+        matrix[freeCells.get(5)[0]][freeCells.get(5)[1]] = CellType.BOMB;
     }
 
     private void drawBoard(GridPane grid) {
@@ -82,7 +111,7 @@ public class Gameboard extends Application {
                 cell.prefHeightProperty().bind(grid.heightProperty().divide(ROWS));
                 cell.setStyle("-fx-border-color: black; -fx-background-color: beige;");
 
-                // Grass on botom
+                // Grass on bottom
                 if (matrix[row][col] != CellType.WALL) {
                     ImageView grassView = new ImageView(grassImg);
                     grassView.fitWidthProperty().bind(stage.widthProperty().divide(COLS));
