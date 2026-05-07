@@ -34,6 +34,11 @@ public class Gameboard extends Application {
     private Image wallImg;
 
     private Stage stage;
+    private GridPane grid;
+
+    // Player position
+    private int playerRow = 1;
+    private int playerCol = 1;
 
     @Override
     public void start(Stage stage) {
@@ -45,7 +50,7 @@ public class Gameboard extends Application {
         wallImg     = new Image(getClass().getResource("/org/example/demo/gameboard/wall.png").toExternalForm());
 
         initMatrix();
-        GridPane grid = new GridPane();
+        grid = new GridPane();
         grid.prefWidthProperty().bind(stage.widthProperty());
         grid.prefHeightProperty().bind(stage.heightProperty());
         drawBoard(grid);
@@ -54,6 +59,16 @@ public class Gameboard extends Application {
         root.setCenter(grid);
 
         Scene scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
+
+        // Move player with arrow keys
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DOWN  -> movePlayer(1, 0);
+                case RIGHT -> movePlayer(0, 1);
+                case LEFT  -> movePlayer(0, -1);
+                case UP    -> movePlayer(-1, 0);
+            }
+        });
 
         stage.setTitle("Rescue the Princess");
         stage.setScene(scene);
@@ -98,6 +113,22 @@ public class Gameboard extends Application {
         matrix[freeCells.get(3)[0]][freeCells.get(3)[1]] = CellType.BOMB;
         matrix[freeCells.get(4)[0]][freeCells.get(4)[1]] = CellType.BOMB;
         matrix[freeCells.get(5)[0]][freeCells.get(5)[1]] = CellType.BOMB;
+    }
+
+    private void movePlayer(int dRow, int dCol) {
+        int newRow = playerRow + dRow;
+        int newCol = playerCol + dCol;
+
+        // Stop if hitting a wall
+        if (matrix[newRow][newCol] == CellType.WALL) return;
+
+        // Move player to new position
+        matrix[playerRow][playerCol] = CellType.GRASS;
+        playerRow = newRow;
+        playerCol = newCol;
+        matrix[playerRow][playerCol] = CellType.PLAYER;
+
+        drawBoard(grid);
     }
 
     private void drawBoard(GridPane grid) {
