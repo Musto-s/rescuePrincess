@@ -2,6 +2,8 @@ package org.example.demo;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -122,6 +124,9 @@ public class Gameboard extends Application {
         // Stop if hitting a wall
         if (matrix[newRow][newCol] == CellType.WALL) return;
 
+        // Check if player reached the princess before moving
+        boolean foundPrincess = matrix[newRow][newCol] == CellType.PRINCESS;
+
         // Move player to new position
         matrix[playerRow][playerCol] = CellType.GRASS;
         playerRow = newRow;
@@ -129,6 +134,15 @@ public class Gameboard extends Application {
         matrix[playerRow][playerCol] = CellType.PLAYER;
 
         drawBoard(grid);
+
+        //alert if player reach the princess
+        if (foundPrincess) {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Victory");
+            alert.setHeaderText(null);
+            alert.setContentText("You rescued the princess!");
+            alert.showAndWait();
+        }
     }
 
     private void drawBoard(GridPane grid) {
