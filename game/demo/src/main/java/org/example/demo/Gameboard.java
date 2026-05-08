@@ -21,6 +21,8 @@ public class Gameboard extends Application {
     private static final int COLS = 10;
     private static final int SCENE_WIDTH = 800;
     private static final int SCENE_HEIGHT = 800;
+
+    // Number of lives the player starts with
     private static final int LIVES = 3;
 
     enum CellType {
@@ -43,7 +45,11 @@ public class Gameboard extends Application {
     private int playerRow = 1;
     private int playerCol = 1;
 
+    // Player lives
     private int lives = LIVES;
+
+    // Stops movement when true
+    private boolean gameOver = false;
 
     @Override
     public void start(Stage stage) {
@@ -121,6 +127,9 @@ public class Gameboard extends Application {
     }
 
     private void movePlayer(int dRow, int dCol) {
+        // Stop if game is over
+        if (gameOver) return;
+
         int newRow = playerRow + dRow;
         int newCol = playerCol + dCol;
 
@@ -139,8 +148,9 @@ public class Gameboard extends Application {
 
         drawBoard(grid);
 
-        //alert if player reach the princess
+        // alert if player reach the princess
         if (foundPrincess) {
+            gameOver = true;
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Victory");
             alert.setHeaderText(null);
@@ -151,6 +161,7 @@ public class Gameboard extends Application {
         // Show alert if player hit a bomb
         if (foundBomb) {
             lives--;
+            if (lives == 0) gameOver = true;
             Alert alert = new Alert(AlertType.WARNING);
             alert.setTitle("Boom");
             alert.setHeaderText(null);
