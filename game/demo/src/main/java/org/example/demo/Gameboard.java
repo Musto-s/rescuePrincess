@@ -21,6 +21,7 @@ public class Gameboard extends Application {
     private static final int COLS = 10;
     private static final int SCENE_WIDTH = 800;
     private static final int SCENE_HEIGHT = 800;
+    private static final int LIVES = 3;
 
     enum CellType {
         GRASS, PLAYER, PRINCESS, BOMB, WALL
@@ -41,6 +42,8 @@ public class Gameboard extends Application {
     // Player position
     private int playerRow = 1;
     private int playerCol = 1;
+
+    private int lives = LIVES;
 
     @Override
     public void start(Stage stage) {
@@ -124,8 +127,9 @@ public class Gameboard extends Application {
         // Stop if hitting a wall
         if (matrix[newRow][newCol] == CellType.WALL) return;
 
-        // Check if player reached the princess before moving
+        // Check what is in the next cell before moving
         boolean foundPrincess = matrix[newRow][newCol] == CellType.PRINCESS;
+        boolean foundBomb     = matrix[newRow][newCol] == CellType.BOMB;
 
         // Move player to new position
         matrix[playerRow][playerCol] = CellType.GRASS;
@@ -141,6 +145,16 @@ public class Gameboard extends Application {
             alert.setTitle("Victory");
             alert.setHeaderText(null);
             alert.setContentText("You rescued the princess!");
+            alert.showAndWait();
+        }
+
+        // Show alert if player hit a bomb
+        if (foundBomb) {
+            lives--;
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Boom");
+            alert.setHeaderText(null);
+            alert.setContentText("You hit a bomb! Lives left: " + lives);
             alert.showAndWait();
         }
     }
